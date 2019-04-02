@@ -1,28 +1,32 @@
 package cn.orgtec.jpa.service.impl;
 
-import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NetUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.system.SystemUtil;
 import cn.orgtec.jpa.JpaApplication;
 import cn.orgtec.jpa.dto.JobDto;
+import cn.orgtec.jpa.entity.Account;
 import cn.orgtec.jpa.entity.HostNameAndSuccess;
 import cn.orgtec.jpa.entity.JobExecutionLogEntity;
+import cn.orgtec.jpa.repository.AccountRepository;
+import cn.orgtec.jpa.repository.JobExecutionLogRepository;
 import cn.orgtec.jpa.service.JobExecutionLogService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * <p>JobExecutionLogServiceImplTest.java此类用于</p>
@@ -37,6 +41,19 @@ public class JobExecutionLogServiceImplTest {
 
     @Autowired
     private JobExecutionLogService jobExecutionLogService;
+
+    @Autowired
+    private JobExecutionLogRepository jobExecutionLogRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+
+    @Test
+    public void findByHostNameInPage(){
+        List<JobExecutionLogEntity> byHostNameInPage = jobExecutionLogService.findByHostNameInPage(null, null);
+        System.out.println(byHostNameInPage);
+    }
 
     @Test
     public void saveJobLog() throws Exception {
@@ -92,9 +109,25 @@ public class JobExecutionLogServiceImplTest {
 
     @Test
     public void listLogsByJobNameLike() {
+        // 不走 count 总条数
         Pageable pageable = new PageRequest(0, 10);
         Page<JobExecutionLogEntity> pageJobLogs = jobExecutionLogService.listLogsByJobNameLike("a", pageable);
-        pageJobLogs.get().forEach(System.out::println);
+        System.out.println(pageJobLogs.getTotalElements());
+        Stream<JobExecutionLogEntity> jobExecutionLogEntityStream = Optional.ofNullable(pageJobLogs).orElse(null).get();
+        List<JobExecutionLogEntity> collect = jobExecutionLogEntityStream.collect(Collectors.toList());
+        System.out.println(collect);
+//        pageJobLogs.get().forEach(System.out::println);
+    }
+
+
+    @Test
+    public void count() {
+        Account entity = new Account();
+        entity.setBankNumber("999");
+        //  将匹配对象封装成Example对象
+        Example<Account> of = Example.of(entity);
+        long count = accountRepository.count(of);
+        System.out.println("==========count==========" + count);
     }
 
     @Test
@@ -164,5 +197,14 @@ public class JobExecutionLogServiceImplTest {
     public void fin(){
         Collection<HostNameAndSuccess> byJobName = jobExecutionLogService.findByJobName(99);
         System.out.println(byJobName.toString());
+    }
+
+    @Test
+    public void buildSpecification(){
+        Map map = new HashMap();
+        map.put("jobName", "xw48ly");
+        map.put("taskId", "ltt4");
+        Specification specification = jobExecutionLogService.buildSpecification(map, false);
+        System.out.println(specification.toString());
     }
 }

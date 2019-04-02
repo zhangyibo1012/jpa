@@ -11,10 +11,16 @@ import java.time.LocalDateTime;
 public class Test {
 
     public Jon cc(){
+        Favor favor = new Favor();
+        favor.setCount(11);
         return  builder -> {
             builder.setJobName("xx");
             builder.setCompleteTime(LocalDateTime.now());
             builder.setHostname("192");
         };
+    }
+
+    public static void main(String[] args) {
+
     }
 }

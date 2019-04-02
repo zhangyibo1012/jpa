@@ -5,9 +5,11 @@ import cn.orgtec.jpa.entity.HostNameAndSuccess;
 import cn.orgtec.jpa.entity.JobExecutionLogEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>JobExecutionLogService.java此类用于</p>
@@ -59,6 +61,7 @@ public interface JobExecutionLogService {
      */
     Page<JobExecutionLogEntity> listLogsByJobNameLike(String jobName, Pageable pageable);
 
+    long count(String hostname);
     //======================================================================================
 
     /**
@@ -68,6 +71,8 @@ public interface JobExecutionLogService {
      * @param hostName
      */
     JobExecutionLogEntity findByJobNameAndHostname(String jobName, String hostName);
+
+    List<JobExecutionLogEntity> findByHostNameInPage(Pageable pageable , String hostname);
 
     /**
      * 验证排序和分页查询
@@ -93,4 +98,6 @@ public interface JobExecutionLogService {
     JobExecutionLogEntity findHostNameById(String id);
 
     Collection<HostNameAndSuccess> findByJobName(int jobName);
+
+     Specification<JobExecutionLogEntity> buildSpecification(Map<String, String> conditions, boolean isCounting);
 }

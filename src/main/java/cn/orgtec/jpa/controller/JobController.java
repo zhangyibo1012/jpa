@@ -4,9 +4,7 @@ import cn.orgtec.jpa.entity.JobExecutionLogEntity;
 import cn.orgtec.jpa.service.JobExecutionLogService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Indexed;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -29,6 +27,13 @@ public class JobController {
         return Optional.ofNullable(administrator).orElse(new JobExecutionLogEntity()).toString();
     }
 
+
+    @PostMapping(value = "/post")
+    public String test(@RequestParam  String parm){
+        // @RequestParam 不可以post接收参数 @Requestbody可以
+        System.out.println(parm);
+        return  parm;
+    }
 //    @RequestMapping(value = "/addJob")
 //    public void addJob() {
 //        int shardingTotalCount = 2;
