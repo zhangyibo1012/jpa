@@ -48,6 +48,13 @@ public class JobExecutionLogServiceImplTest {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Test
+    public void findByIdAndUpdate(){
+        Optional<JobExecutionLogEntity> oahp9e = jobExecutionLogRepository.findById("oahp9e");
+        JobExecutionLogEntity entity = oahp9e.get();
+        entity.setHostname("hix2");
+        jobExecutionLogRepository.save(entity);
+    }
 
     @Test
     public void findByHostNameInPage(){
